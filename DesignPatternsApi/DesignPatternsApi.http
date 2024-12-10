@@ -1,0 +1,6 @@
+@DesignPatternsApi_HostAddress = http://localhost:5102
+
+GET {{DesignPatternsApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
