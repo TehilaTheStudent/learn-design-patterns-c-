@@ -20,3 +20,6 @@ dedicated class for "building" logic
 fluent syntax can be used to create fake objects for unit testing- with chaning set methods and implicit conversion
 
 different builders implementation can give same object that was built in different ways, and can give 2 different objects, but than they can be retrieved only from the builders themselves, not from the director couse its not in the IBuilder
+
+
+![alt text](image-10.png)
