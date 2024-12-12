@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RealisticDependencies;
-using DesignPatternsApi.Patterns.Creational.FactoryMethod;
-using DesignPatternsApi.Patterns.Creational.FactoryMethod.Creators;
+using DesignPatternsApi.Service.Patterns.Creational.FactoryMethod;
+using DesignPatternsApi.Service.Patterns.Creational.FactoryMethod.Creators;
 
 namespace DesignPatternsApi.Controllers.Creational;
 
@@ -13,20 +13,32 @@ public class FactoryMethodController(IApplicationLogger logger, IAmqpQueue deliv
     private readonly IAmqpQueue _deliveryQueue = deliveryQueue;
 
     /// <summary>
-    /// Endpoint to create a delivery based on the given delivery type.
+    /// This example uses the Factory Method creational pattern to help fulfill a Food Delivery order
+    /// by bicycle or car depending on the input given to the console application.
+    /// One of the benefits of this pattern is that it's easier to extend the delivery type construction
+    /// code independently from the Main service method here which invokes it. We could introduce new delivery types
+    /// into the project without modifying / breaking our client code - in this case, the Main method.
+    /// We've separated the concerns of creating a DeliveryCreator from the client code that uses it.
+    /// All of the static data could be extracted from the code into the environment or another configuration source.
     /// </summary>
-    /// <param name="request">The request body containing the delivery type.</param>
-    /// <returns>Success or error message.</returns>
+    /// <param name="args"></param>
+    /// <returns></returns>
     [HttpPost("deliver")]
     public IActionResult DeliverMaterial([FromBody] DeliveryRequest request)
-    {
+    {// Collect data at runtime which will ultimately determine 
+     // the chosen implementation of IDeliversFood
         try
         {
-            // Build the appropriate delivery creator
+            // The client code here deals with business logic at a higher level of abstraction than
+            // any of the details related to "how" things actually get delivered.
+            // Here we just want to be able to queue up something that delivers food so
+            // we can complete our delivery. We can facilitate binding the concrete type as late as possible 
+            // by choosing to work with the abstract type here. We don't depend on implementation details - 
+            // we depend on abstractions.
             var deliveryCreator = BuildDeliveryCreator(request.DeliveryType, _deliveryQueue);
 
             // Queue the delivery
-            deliveryCreator.QueueVehicleForDelivery();
+            deliveryCreator.QueueDelivererForDelivery();
 
             return Ok(new
             {
@@ -41,12 +53,17 @@ public class FactoryMethodController(IApplicationLogger logger, IAmqpQueue deliv
     }
 
     /// <summary>
-    /// Factory method to create the appropriate DeliveryCreator instance.
+    /// Factory Method invoked by the client (our Main method). This method decides based on data at run-time
+    /// which DeliveryCreator type we're eventually binding. Thanks to (dynamic) polymorphism, the
+    /// compiler is fine with us declaring the return type of this method as an abstract type,
+    /// even though it will return a concrete subclass.
+    /// In this case, the decision of which concrete type will eventually be bound is made by evaluating the 
+    /// value of a string `deliveryType` provided by the user of our client.
     /// </summary>
-    /// <param name="deliveryType">The type of delivery.</param>
-    /// <param name="deliveryQueue">The delivery queue.</param>
-    /// <returns>The appropriate DeliveryCreator instance.</returns>
-    private DeliveryCreator BuildDeliveryCreator(string deliveryType, IAmqpQueue deliveryQueue)
+    /// <param name="deliveryType"></param>
+    /// <param name="deliveryQueue"></param>
+    /// <returns></returns>
+    private BaseDeliveryCreator BuildDeliveryCreator(string deliveryType, IAmqpQueue deliveryQueue)
     {
         var validDeliveryOptions = new List<string> { "email", "cloud", "link" };
         if (!validDeliveryOptions.Contains(deliveryType))

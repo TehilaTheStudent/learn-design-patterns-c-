@@ -1,6 +1,5 @@
-﻿using DesignPatternsApi.Pattern.Creational.FactoryMethod;
-
-namespace DesignPatternsApi.Patterns.Creational.FactoryMethod.DeliveryTypes;
+﻿
+namespace DesignPatternsApi.Service.Patterns.Creational.FactoryMethod.DeliveryTypes;
 
 public class Cloud : IDeliversMaterial
 {

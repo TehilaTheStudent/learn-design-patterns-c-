@@ -1,17 +1,15 @@
-﻿using DesignPatternsApi.Pattern.Creational.FactoryMethod;
-using DesignPatternsApi.Patterns.Creational.FactoryMethod.DeliveryTypes;
+﻿using DesignPatternsApi.Service.Patterns.Creational.FactoryMethod.DeliveryTypes;
 using RealisticDependencies;
 
-namespace DesignPatternsApi.Patterns.Creational.FactoryMethod.Creators;
+namespace DesignPatternsApi.Service.Patterns.Creational.FactoryMethod.Creators;
 
-public class EmailDeliveryCreator : DeliveryCreator
+public class EmailDeliveryCreator(IAmqpQueue deliveryQueue, IApplicationLogger logger) : BaseDeliveryCreator(deliveryQueue, logger)
 {
-    public EmailDeliveryCreator(IAmqpQueue deliveryQueue, IApplicationLogger logger) : base(deliveryQueue, logger) { }
     /// <summary>
     /// Factory Method for creating a new Email (IDeliversMaterial implementation)
     /// </summary>
     /// <returns>Email instance</returns>
-    protected override IDeliversMaterial RegisterVehicle()
+    protected override IDeliversMaterial RegisterDeliverer()
     {
         var email = new Email
         {

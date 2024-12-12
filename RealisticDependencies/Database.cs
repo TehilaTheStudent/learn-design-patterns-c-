@@ -13,18 +13,12 @@ public interface IDatabase
     Task<List<string>> DumpData();
 }
 
-public class Database : IDatabase
+public class Database(string connectionString, IApplicationLogger logger) : IDatabase
 {
-    private readonly string _connectionString;
-    private readonly IApplicationLogger _logger;
+    private readonly string _connectionString = connectionString;
+    private readonly IApplicationLogger _logger = logger;
     private bool _isConnected;
     private readonly Dictionary<string, string> _data = new();
-
-    public Database(string connectionString, IApplicationLogger logger)
-    {
-        _connectionString = connectionString;
-        _logger = logger;
-    }
 
     public async Task Connect()
     {

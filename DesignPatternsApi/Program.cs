@@ -1,3 +1,4 @@
+using RealisticDependencies;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +7,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//  Scoped vs Singleton vs Transient
+// Scoped: Creates one instance per request (e.g., IDatabase).
+// Singleton: Creates one instance for the application's lifetime (e.g., IApplicationLogger).
+// Transient: Creates a new instance every time it’s requested.
+// For IDatabase, Scoped is ideal because each request gets its own database connection.
+builder.Services.AddSingleton<IApplicationLogger, ConsoleLogger>(); // Singleton lifetime
+builder.Services.AddSingleton<IAmqpQueue, CloudQueue>(); // Singleton lifetime
+builder.Services.AddScoped<IDatabase, Database>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var logger = provider.GetRequiredService<IApplicationLogger>();
+    return new Database(connectionString, logger);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,29 +31,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+
 app.MapControllers();
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+

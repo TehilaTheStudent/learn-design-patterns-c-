@@ -1,16 +1,15 @@
-using DesignPatternsApi.Pattern.Creational.FactoryMethod;
-using DesignPatternsApi.Patterns.Creational.FactoryMethod.DeliveryTypes;
+using DesignPatternsApi.Service.Patterns.Creational.FactoryMethod.DeliveryTypes;
 using RealisticDependencies;
 
-namespace DesignPatternsApi.Patterns.Creational.FactoryMethod.Creators;
+namespace DesignPatternsApi.Service.Patterns.Creational.FactoryMethod.Creators;
 
-public class CloudDeliveryCreator(IAmqpQueue deliveryQueue, IApplicationLogger logger) : DeliveryCreator(deliveryQueue, logger)
+public class CloudDeliveryCreator(IAmqpQueue deliveryQueue, IApplicationLogger logger) : BaseDeliveryCreator(deliveryQueue, logger)
 {
     /// <summary>
     /// Factory Method for creating a new Cloud (IDeliversMaterial implementation)
     /// </summary>
     /// <returns>Cloud instance</returns>
-    protected override IDeliversMaterial RegisterVehicle()
+    protected override IDeliversMaterial RegisterDeliverer()
     {
         var cloud = new Cloud
         {
