@@ -12,4 +12,5 @@ In the context of **design patterns**, **aggregation** is often compared with **
 - **Aggregation** often appears when objects work together but retain their own lifecycle, promoting loose coupling (e.g., **Mediator**, **Observer**).
 - **Composition** is used when an object is inherently part of another, ensuring strong coupling and lifecycle control (e.g., **Composite**, **Decorator**).
 
-Would you like an example or clarification of any specific pattern?
+---
+motivation for factories: hide the creation and implementation behind interfaces, so we can change the concrete without changing the client code    

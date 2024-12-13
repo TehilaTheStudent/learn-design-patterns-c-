@@ -2,15 +2,10 @@
 
 namespace RealisticDependencies;
 
-public class EmailMessage
+public class EmailMessage(string to, string content)
 {
-    public string To { get; set; }
-    public string Content { get; set; }
-    public EmailMessage(string to, string content)
-    {
-        To = to;
-        Content = content;
-    }
+    public string To { get; set; } = to;
+    public string Content { get; set; } = content;
 }
 
 public interface ISendsEmails
@@ -18,11 +13,9 @@ public interface ISendsEmails
     public Task SendMessage(EmailMessage message);
 }
 
-public class Emailer : ISendsEmails
+public class Emailer(IApplicationLogger logger) : ISendsEmails
 {
-    private readonly IApplicationLogger _logger;
-
-    public Emailer(IApplicationLogger logger) { _logger = logger; }
+    private readonly IApplicationLogger _logger = logger;
 
     public async Task SendMessage(EmailMessage message)
     {

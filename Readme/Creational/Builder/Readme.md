@@ -23,3 +23,17 @@ different builders implementation can give same object that was built in differe
 
 
 ![alt text](image-10.png)
+
+particular motivation: complex-to-create  objects
+
+### how to extend? (same product different building logic)
+
+1. **Create a New Builder:**
+   - Implement `ITaskBuilder` or `IFluentTaskBuilder` for the new task type (e.g., `ResearchTaskBuilder`).
+
+2. **Define Custom Build Logic:**
+   - Override methods like `SetX()` and `BuildTask()` to set properties specific to the new task.
+
+3. **Update the TaskDirector (Optional):**
+   - Pass the new builder to `TaskDirector` if it needs to use the builder.
+

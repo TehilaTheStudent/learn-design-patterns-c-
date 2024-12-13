@@ -20,6 +20,12 @@ builder.Services.AddScoped<IDatabase, Database>(provider =>
     var logger = provider.GetRequiredService<IApplicationLogger>();
     return new Database(connectionString, logger);
 });
+builder.Services.AddScoped<ISendsEmails, Emailer>(provider =>
+{
+    var logger = provider.GetRequiredService<IApplicationLogger>();
+    return new Emailer(logger);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
